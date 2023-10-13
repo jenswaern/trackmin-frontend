@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "NODE_TLS_REJECT_UNAUTHORIZED=0 concurrently \"next dev\" \"local-ssl-proxy --source 3010 --target 3000 --cert localhost.pem --key localhost-key.pem\"",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -30,6 +30,8 @@
     "eslint-config-next": "latest",
     "postcss": "latest",
     "tailwindcss": "latest",
-    "typescript": "latest"
+    "typescript": "latest",
+    "concurrently": "^8.2.0",
+    "local-ssl-proxy": "^2.0.5"
   }
 }

@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn, createApiUrl } from "@/lib/utils";
 import React from "react";
 import { Icons } from "./ui/Icons";
 import { Button } from "./ui/button";
@@ -17,6 +17,17 @@ export default function Login({ className, ...props }: UserAuthFormProps) {
     setTimeout(() => {
       setIsLoading(false);
     }, 3000);
+  }
+
+  function routeToGoogle():
+    | React.MouseEventHandler<HTMLButtonElement>
+    | undefined {
+    if (isLoading) return undefined;
+    console.log("routeToGoogle", createApiUrl(`/auth/google`));
+    return () => {
+      setIsLoading(true);
+      window.location.href = createApiUrl(`/auth/google`);
+    };
   }
 
   return (
@@ -68,7 +79,12 @@ export default function Login({ className, ...props }: UserAuthFormProps) {
           </span>
         </div>
       </div>
-      <Button variant="outline" type="button" disabled={isLoading}>
+      <Button
+        variant="outline"
+        type="button"
+        disabled={isLoading}
+        onClick={() => routeToGoogle()}
+      >
         {isLoading ? (
           <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
         ) : (
