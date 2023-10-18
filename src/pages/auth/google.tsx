@@ -1,17 +1,22 @@
 import { Icons } from "@/components/ui/Icons";
 import { useUser } from "@/contexts/UserContext";
-import { createApiUrl, getRouteLoginAfter } from "@/lib/utils";
+import { createApiUrl } from "@/lib/utils";
 import User from "@/typings/User";
-import { useRouter } from "next/router";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
 export default function Home() {
   const router = useRouter();
   const { setUser, setToken } = useUser();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (!router.isReady) return;
-    const { state, code } = router.query;
+    if (!searchParams) return;
+    // Get the state and code from the searchParams
+    const state = searchParams.get("state");
+    const code = searchParams.get("code");
+    const scope = searchParams.get("scope");
+    // const { state, code } = router.query;
     if (state && code) {
       // Send the state and code to the server to exchange for an access token
       fetch(createApiUrl(`/auth/google/callback`), {
@@ -19,7 +24,7 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(router.query),
+        body: JSON.stringify({ state, code, scope }),
       })
         .then((res) => {
           if (!res.ok) {
@@ -29,21 +34,22 @@ export default function Home() {
           return res.json();
         })
         .then((data: { user: User; api_token: string }) => {
-          if (data.user === null) {
-            router.push("/login?error=google-auth-failed");
-            return;
-          }
-          // Set the user in the UserContext
-          setUser(data.user);
-          setToken(data.api_token);
-          router.push(getRouteLoginAfter(data.user));
+          console.log("data", data);
+          // if (data.user === null) {
+          //   router.push("/login?error=google-auth-failed");
+          //   return;
+          // }
+          // // Set the user in the UserContext
+          // setUser(data.user);
+          // setToken(data.api_token);
+          // router.push(getRouteLoginAfter(data.user));
         })
         .catch((error) => {
           console.error(error);
-          router.push("/login?error=google-auth-failed");
+          // router.push("/login?error=google-auth-failed");
         });
     }
-  }, [router, setUser, setToken]); // Dependency on router.asPath
+  }, [router, setUser, setToken, searchParams]);
 
   return (
     <main className={`flex min-h-screen flex-col items-center justify-center`}>

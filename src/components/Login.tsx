@@ -1,14 +1,15 @@
 import { cn, createApiUrl } from "@/lib/utils";
+import { useRouter } from "next/navigation";
+
 import React from "react";
 import { Icons } from "./ui/Icons";
 import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export default function Login({ className, ...props }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const router = useRouter();
 
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault();
@@ -24,15 +25,14 @@ export default function Login({ className, ...props }: UserAuthFormProps) {
     | undefined {
     if (isLoading) return undefined;
     console.log("routeToGoogle", createApiUrl(`/auth/google`));
-    return () => {
-      setIsLoading(true);
-      window.location.href = createApiUrl(`/auth/google`);
-    };
+    setIsLoading(true);
+    router.push(createApiUrl(`/auth/google`));
   }
 
   return (
     <div className={cn("grid gap-6", className)} {...props}>
-      <form onSubmit={onSubmit}>
+      <Icons.combinationLogo className="h-12 w-full" />
+      {/* <form onSubmit={onSubmit}>
         <div className="grid gap-2">
           <div className="grid gap-1">
             <Label className="sr-only" htmlFor="email">
@@ -78,7 +78,7 @@ export default function Login({ className, ...props }: UserAuthFormProps) {
             Or continue with
           </span>
         </div>
-      </div>
+      </div> */}
       <Button
         variant="outline"
         type="button"
