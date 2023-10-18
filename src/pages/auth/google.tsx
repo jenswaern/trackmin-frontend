@@ -35,14 +35,15 @@ export default function Home() {
         })
         .then((data: { user: User; api_token: string }) => {
           console.log("data", data);
-          // if (data.user === null) {
-          //   router.push("/login?error=google-auth-failed");
-          //   return;
-          // }
-          // // Set the user in the UserContext
-          // setUser(data.user);
-          // setToken(data.api_token);
+          if (data.user === null) {
+            router.push("/login?error=google-auth-failed");
+            return;
+          }
+          // Set the user in the UserContext
+          setUser(data.user);
+          setToken(data.api_token);
           // router.push(getRouteLoginAfter(data.user));
+          router.push("/app");
         })
         .catch((error) => {
           console.error(error);
